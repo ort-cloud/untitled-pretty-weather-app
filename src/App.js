@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./App.css";
 
 const api = {
@@ -7,6 +7,22 @@ const api = {
 };
 
 function App() {
+  const [query, setQuery] = useState("");
+  const [weather, setWeather] = useState({});
+
+  const search = (evt) => {
+    if (evt.key === "Enter") {
+      fetch(`${api.base}weather?q=${query}&units=imperial&APPID=${api.key}`)
+        .then((res) => res.json())
+        .then((result) => {
+          
+          setWeather(result)
+          setQuery('');
+          console.log(result);
+        });
+    }
+  };
+
   const dateBuilder = (d) => {
     let months = [
       "January",
@@ -38,14 +54,21 @@ function App() {
     let month = months[d.getMonth()];
     let year = d.getFullYear();
 
-    return `${day} ${date} ${month} ${year}`
+    return `${day} ${date} ${month} ${year}`;
   };
 
   return (
     <div className="app">
       <main>
         <div className="search-box">
-          <input type="text" className="search-bar" placeholder="Search..." />
+          <input 
+            type="text" 
+            className="search-bar" 
+            placeholder="Search..."
+            onChange={e => setQuery(e.target.value)}
+            value={query}
+            onKeyPress={search}
+            />
         </div>
         <div className="location-box">
           <div className="location">New York City, US</div>
